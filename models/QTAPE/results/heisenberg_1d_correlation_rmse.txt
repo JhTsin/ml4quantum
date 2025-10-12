@@ -1,0 +1,38 @@
+qubits: 8, train_samples: 20, test loss: 0.1499710977077484
+qubits: 8, train_samples: 50, test loss: 0.10932832211256027
+qubits: 8, train_samples: 90, test loss: 0.08113208413124084
+qubits: 10, train_samples: 20, test loss: 0.16905498504638672
+qubits: 10, train_samples: 50, test loss: 0.1466931700706482
+qubits: 10, train_samples: 90, test loss: 0.11700711399316788
+qubits: 12, train_samples: 20, test loss: 0.23194262385368347
+qubits: 12, train_samples: 50, test loss: 0.24429745972156525
+qubits: 12, train_samples: 90, test loss: 0.24866050481796265
+
+
+test loss: 0.02832230180501938, qubits: 2, shots_num: 3, samples_num: 10, train_samples: 5, test_samples: 5
+
+test loss: 0.13754932582378387, qubits: 127, shots_num: 64, samples_num: 100, train_samples: 20, test_samples: 80
+test loss: 0.13352909684181213, qubits: 127, shots_num: 64, samples_num: 100, train_samples: 50, test_samples: 50
+test loss: 0.1322498768568039, qubits: 127, shots_num: 64, samples_num: 100, train_samples: 90, test_samples: 10
+test loss: 0.13284289836883545, qubits: 127, shots_num: 128, samples_num: 100, train_samples: 20, test_samples: 80
+test loss: 0.13146774470806122, qubits: 127, shots_num: 128, samples_num: 100, train_samples: 50, test_samples: 50
+test loss: 0.13482478260993958, qubits: 127, shots_num: 128, samples_num: 100, train_samples: 90, test_samples: 10
+test loss: 0.13246837258338928, qubits: 127, shots_num: 256, samples_num: 100, train_samples: 20, test_samples: 80
+test loss: 0.13325798511505127, qubits: 127, shots_num: 256, samples_num: 100, train_samples: 50, test_samples: 50
+test loss: 0.13400143384933472, qubits: 127, shots_num: 256, samples_num: 100, train_samples: 90, test_samples: 10
+test loss: 0.13480144739151, qubits: 127, shots_num: 512, samples_num: 100, train_samples: 20, test_samples: 80
+test loss: 0.13473369181156158, qubits: 127, shots_num: 512, samples_num: 100, train_samples: 50, test_samples: 50
+test loss: 0.13313619792461395, qubits: 127, shots_num: 512, samples_num: 100, train_samples: 90, test_samples: 10
+
+test loss: 0.13370046019554138, qubits: 127, shots_num: 64, samples_num: 100, train_samples: 20, test_samples: 80
+test loss: 0.13387253880500793, qubits: 127, shots_num: 64, samples_num: 100, train_samples: 50, test_samples: 50
+test loss: 0.13369354605674744, qubits: 127, shots_num: 64, samples_num: 100, train_samples: 90, test_samples: 10
+test loss: 0.13370488584041595, qubits: 127, shots_num: 128, samples_num: 100, train_samples: 20, test_samples: 80
+test loss: 0.13285917043685913, qubits: 127, shots_num: 128, samples_num: 100, train_samples: 50, test_samples: 50
+test loss: 0.13476745784282684, qubits: 127, shots_num: 128, samples_num: 100, train_samples: 90, test_samples: 10
+test loss: 0.13611680269241333, qubits: 127, shots_num: 256, samples_num: 100, train_samples: 20, test_samples: 80
+test loss: 0.133189857006073, qubits: 127, shots_num: 256, samples_num: 100, train_samples: 50, test_samples: 50
+test loss: 0.13364800810813904, qubits: 127, shots_num: 256, samples_num: 100, train_samples: 90, test_samples: 10
+test loss: 0.13490602374076843, qubits: 127, shots_num: 512, samples_num: 100, train_samples: 20, test_samples: 80
+test loss: 0.1330590844154358, qubits: 127, shots_num: 512, samples_num: 100, train_samples: 50, test_samples: 50
+test loss: 0.13271306455135345, qubits: 127, shots_num: 512, samples_num: 100, train_samples: 90, test_samples: 10

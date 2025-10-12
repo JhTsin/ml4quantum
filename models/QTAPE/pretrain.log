@@ -1,0 +1,185 @@
+nohup: ignoring input
+/home/ubuntu/code/python/DeepModelFusion/ml4quantum/dataset_generation
+/home/ubuntu/code/python/DeepModelFusion/ml4quantum/dataset_generation
+Using device: cuda
+Number of GPUs available: 2
+  GPU 0: NVIDIA GeForce RTX 4090
+  GPU 1: NVIDIA GeForce RTX 4090
+Using DataParallel with 2 GPUs
+Training with early stopping: patience=10, min_delta=0.0001
+  0%|          | 0/1000 [00:00<?, ?it/s]/home/ubuntu/miniconda3/lib/python3.12/site-packages/torch/nn/modules/linear.py:125: UserWarning: Attempting to run cuBLAS, but there was no current CUDA context! Attempting to set the primary context... (Triggered internally at /opt/conda/conda-bld/pytorch_1729647329220/work/aten/src/ATen/cuda/CublasHandlePool.cpp:135.)
+  return F.linear(input, self.weight, self.bias)
+  0%|          | 1/1000 [00:41<11:31:41, 41.54s/it]Epoch [1/1000], Loss: 0.05411422, Best Loss: inf
+*** New best model saved at epoch 1 with loss 0.05411422 ***
+  0%|          | 2/1000 [01:22<11:27:21, 41.32s/it]Epoch [2/1000], Loss: 0.00302294, Best Loss: 0.05411422
+*** New best model saved at epoch 2 with loss 0.00302294 ***
+  0%|          | 3/1000 [02:03<11:23:11, 41.11s/it]Epoch [3/1000], Loss: 0.00121334, Best Loss: 0.00302294
+*** New best model saved at epoch 3 with loss 0.00121334 ***
+  0%|          | 4/1000 [02:44<11:19:24, 40.93s/it]Epoch [4/1000], Loss: 0.00070240, Best Loss: 0.00121334
+*** New best model saved at epoch 4 with loss 0.00070240 ***
+  0%|          | 5/1000 [03:24<11:16:32, 40.80s/it]Epoch [5/1000], Loss: 0.00037764, Best Loss: 0.00070240
+*** New best model saved at epoch 5 with loss 0.00037764 ***
+  1%|          | 6/1000 [04:05<11:17:35, 40.90s/it]Epoch [6/1000], Loss: 0.00021406, Best Loss: 0.00037764
+*** New best model saved at epoch 6 with loss 0.00021406 ***
+  1%|          | 7/1000 [04:46<11:17:47, 40.95s/it]Epoch [7/1000], Loss: 0.00011165, Best Loss: 0.00021406
+*** New best model saved at epoch 7 with loss 0.00011165 ***
+  1%|          | 8/1000 [05:27<11:15:03, 40.83s/it]Epoch [8/1000], Loss: 0.00005865, Best Loss: 0.00011165
+No improvement for 1 epochs (patience: 10)
+  1%|          | 9/1000 [06:07<11:09:52, 40.56s/it]Epoch [9/1000], Loss: 0.00003970, Best Loss: 0.00011165
+No improvement for 2 epochs (patience: 10)
+  1%|          | 10/1000 [06:47<11:06:48, 40.41s/it]Epoch [10/1000], Loss: 0.00003074, Best Loss: 0.00011165
+No improvement for 3 epochs (patience: 10)
+  1%|          | 11/1000 [07:27<11:05:44, 40.39s/it]Epoch [11/1000], Loss: 0.00002509, Best Loss: 0.00011165
+No improvement for 4 epochs (patience: 10)
+  1%|          | 12/1000 [08:08<11:03:58, 40.32s/it]Epoch [12/1000], Loss: 0.00002075, Best Loss: 0.00011165
+No improvement for 5 epochs (patience: 10)
+  1%|▏         | 13/1000 [08:49<11:07:44, 40.59s/it]Epoch [13/1000], Loss: 0.00001807, Best Loss: 0.00011165
+No improvement for 6 epochs (patience: 10)
+  1%|▏         | 14/1000 [09:29<11:04:59, 40.47s/it]Epoch [14/1000], Loss: 0.00001514, Best Loss: 0.00011165
+No improvement for 7 epochs (patience: 10)
+  2%|▏         | 15/1000 [10:09<11:02:04, 40.33s/it]Epoch [15/1000], Loss: 0.00001380, Best Loss: 0.00011165
+No improvement for 8 epochs (patience: 10)
+  2%|▏         | 16/1000 [10:49<11:00:43, 40.29s/it]Epoch [16/1000], Loss: 0.00001220, Best Loss: 0.00011165
+No improvement for 9 epochs (patience: 10)
+  2%|▏         | 17/1000 [11:30<11:01:53, 40.40s/it]Epoch [17/1000], Loss: 0.00001073, Best Loss: 0.00011165
+*** New best model saved at epoch 17 with loss 0.00001073 ***
+  2%|▏         | 18/1000 [12:10<10:58:37, 40.24s/it]Epoch [18/1000], Loss: 0.00001019, Best Loss: 0.00001073
+No improvement for 1 epochs (patience: 10)
+  2%|▏         | 19/1000 [12:50<10:59:07, 40.31s/it]Epoch [19/1000], Loss: 0.00000956, Best Loss: 0.00001073
+No improvement for 2 epochs (patience: 10)
+  2%|▏         | 20/1000 [13:31<10:58:33, 40.32s/it]Epoch [20/1000], Loss: 0.00000900, Best Loss: 0.00001073
+No improvement for 3 epochs (patience: 10)
+  2%|▏         | 21/1000 [14:11<10:58:43, 40.37s/it]Epoch [21/1000], Loss: 0.00000951, Best Loss: 0.00001073
+No improvement for 4 epochs (patience: 10)
+  2%|▏         | 22/1000 [14:51<10:58:00, 40.37s/it]Epoch [22/1000], Loss: 0.00000817, Best Loss: 0.00001073
+No improvement for 5 epochs (patience: 10)
+  2%|▏         | 23/1000 [15:32<10:57:34, 40.38s/it]Epoch [23/1000], Loss: 0.00000874, Best Loss: 0.00001073
+No improvement for 6 epochs (patience: 10)
+  2%|▏         | 24/1000 [16:12<10:56:42, 40.37s/it]Epoch [24/1000], Loss: 0.00001020, Best Loss: 0.00001073
+No improvement for 7 epochs (patience: 10)
+  2%|▎         | 25/1000 [16:53<10:56:38, 40.41s/it]Epoch [25/1000], Loss: 0.00001035, Best Loss: 0.00001073
+No improvement for 8 epochs (patience: 10)
+  3%|▎         | 26/1000 [17:33<10:55:58, 40.41s/it]Epoch [26/1000], Loss: 0.00001271, Best Loss: 0.00001073
+No improvement for 9 epochs (patience: 10)
+  3%|▎         | 26/1000 [18:13<11:23:02, 42.08s/it]
+Epoch [27/1000], Loss: 0.00001074, Best Loss: 0.00001073
+No improvement for 10 epochs (patience: 10)
+
+Early stopping triggered at epoch 27
+Best loss 0.00001073 was at epoch 17
+Final model saved at save/final_pretrain_q127_s64_bs64_ep27.pt
+Best model was saved at epoch 17 with loss 0.00001073
+Using device: cuda
+Number of GPUs available: 2
+  GPU 0: NVIDIA GeForce RTX 4090
+  GPU 1: NVIDIA GeForce RTX 4090
+Using DataParallel with 2 GPUs
+Training with early stopping: patience=10, min_delta=0.0001
+  0%|          | 0/1000 [00:00<?, ?it/s]  0%|          | 1/1000 [01:21<22:37:47, 81.55s/it]Epoch [1/1000], Loss: 0.02865602, Best Loss: inf
+*** New best model saved at epoch 1 with loss 0.02865602 ***
+  0%|          | 2/1000 [02:43<22:38:10, 81.65s/it]Epoch [2/1000], Loss: 0.00110466, Best Loss: 0.02865602
+*** New best model saved at epoch 2 with loss 0.00110466 ***
+  0%|          | 3/1000 [04:04<22:35:21, 81.57s/it]Epoch [3/1000], Loss: 0.00026755, Best Loss: 0.00110466
+*** New best model saved at epoch 3 with loss 0.00026755 ***
+  0%|          | 4/1000 [05:26<22:33:27, 81.53s/it]Epoch [4/1000], Loss: 0.00007654, Best Loss: 0.00026755
+*** New best model saved at epoch 4 with loss 0.00007654 ***
+  0%|          | 5/1000 [06:47<22:28:20, 81.31s/it]Epoch [5/1000], Loss: 0.00004559, Best Loss: 0.00007654
+No improvement for 1 epochs (patience: 10)
+  1%|          | 6/1000 [08:07<22:23:46, 81.11s/it]Epoch [6/1000], Loss: 0.00003145, Best Loss: 0.00007654
+No improvement for 2 epochs (patience: 10)
+  1%|          | 7/1000 [09:28<22:21:28, 81.06s/it]Epoch [7/1000], Loss: 0.00002364, Best Loss: 0.00007654
+No improvement for 3 epochs (patience: 10)
+  1%|          | 8/1000 [10:49<22:18:37, 80.97s/it]Epoch [8/1000], Loss: 0.00001829, Best Loss: 0.00007654
+No improvement for 4 epochs (patience: 10)
+  1%|          | 9/1000 [12:10<22:16:28, 80.92s/it]Epoch [9/1000], Loss: 0.00001504, Best Loss: 0.00007654
+No improvement for 5 epochs (patience: 10)
+  1%|          | 10/1000 [13:31<22:15:39, 80.95s/it]Epoch [10/1000], Loss: 0.00001342, Best Loss: 0.00007654
+No improvement for 6 epochs (patience: 10)
+  1%|          | 11/1000 [14:52<22:15:20, 81.01s/it]Epoch [11/1000], Loss: 0.00001234, Best Loss: 0.00007654
+No improvement for 7 epochs (patience: 10)
+  1%|          | 12/1000 [16:13<22:14:24, 81.04s/it]Epoch [12/1000], Loss: 0.00001194, Best Loss: 0.00007654
+No improvement for 8 epochs (patience: 10)
+  1%|▏         | 13/1000 [17:34<22:12:13, 80.99s/it]Epoch [13/1000], Loss: 0.00001303, Best Loss: 0.00007654
+No improvement for 9 epochs (patience: 10)
+  1%|▏         | 13/1000 [18:55<23:57:05, 87.36s/it]
+Epoch [14/1000], Loss: 0.00001545, Best Loss: 0.00007654
+No improvement for 10 epochs (patience: 10)
+
+Early stopping triggered at epoch 14
+Best loss 0.00007654 was at epoch 4
+Final model saved at save/final_pretrain_q127_s128_bs64_ep14.pt
+Best model was saved at epoch 4 with loss 0.00007654
+Using device: cuda
+Number of GPUs available: 2
+  GPU 0: NVIDIA GeForce RTX 4090
+  GPU 1: NVIDIA GeForce RTX 4090
+Using DataParallel with 2 GPUs
+Training with early stopping: patience=10, min_delta=0.0001
+  0%|          | 0/1000 [00:00<?, ?it/s]  0%|          | 1/1000 [02:41<44:49:35, 161.54s/it]Epoch [1/1000], Loss: 0.01479048, Best Loss: inf
+*** New best model saved at epoch 1 with loss 0.01479048 ***
+  0%|          | 2/1000 [05:23<44:49:19, 161.68s/it]Epoch [2/1000], Loss: 0.00059731, Best Loss: 0.01479048
+*** New best model saved at epoch 2 with loss 0.00059731 ***
+  0%|          | 3/1000 [08:05<44:46:40, 161.69s/it]Epoch [3/1000], Loss: 0.00004077, Best Loss: 0.00059731
+*** New best model saved at epoch 3 with loss 0.00004077 ***
+  0%|          | 4/1000 [10:46<44:45:20, 161.77s/it]Epoch [4/1000], Loss: 0.00002357, Best Loss: 0.00004077
+No improvement for 1 epochs (patience: 10)
+  0%|          | 5/1000 [13:28<44:40:48, 161.66s/it]Epoch [5/1000], Loss: 0.00001593, Best Loss: 0.00004077
+No improvement for 2 epochs (patience: 10)
+  1%|          | 6/1000 [16:09<44:36:41, 161.57s/it]Epoch [6/1000], Loss: 0.00001287, Best Loss: 0.00004077
+No improvement for 3 epochs (patience: 10)
+  1%|          | 7/1000 [18:50<44:29:43, 161.31s/it]Epoch [7/1000], Loss: 0.00001503, Best Loss: 0.00004077
+No improvement for 4 epochs (patience: 10)
+  1%|          | 8/1000 [21:31<44:23:42, 161.11s/it]Epoch [8/1000], Loss: 0.00002135, Best Loss: 0.00004077
+No improvement for 5 epochs (patience: 10)
+  1%|          | 9/1000 [24:12<44:20:08, 161.06s/it]Epoch [9/1000], Loss: 0.00003050, Best Loss: 0.00004077
+No improvement for 6 epochs (patience: 10)
+  1%|          | 10/1000 [26:53<44:18:15, 161.11s/it]Epoch [10/1000], Loss: 0.00003597, Best Loss: 0.00004077
+No improvement for 7 epochs (patience: 10)
+  1%|          | 11/1000 [29:35<44:23:09, 161.57s/it]Epoch [11/1000], Loss: 0.00004088, Best Loss: 0.00004077
+No improvement for 8 epochs (patience: 10)
+  1%|          | 12/1000 [32:18<44:25:46, 161.89s/it]Epoch [12/1000], Loss: 0.00004154, Best Loss: 0.00004077
+No improvement for 9 epochs (patience: 10)
+  1%|          | 12/1000 [35:00<48:02:08, 175.03s/it]
+Epoch [13/1000], Loss: 0.00004302, Best Loss: 0.00004077
+No improvement for 10 epochs (patience: 10)
+
+Early stopping triggered at epoch 13
+Best loss 0.00004077 was at epoch 3
+Final model saved at save/final_pretrain_q127_s256_bs64_ep13.pt
+Best model was saved at epoch 3 with loss 0.00004077
+Using device: cuda
+Number of GPUs available: 2
+  GPU 0: NVIDIA GeForce RTX 4090
+  GPU 1: NVIDIA GeForce RTX 4090
+Using DataParallel with 2 GPUs
+Training with early stopping: patience=10, min_delta=0.0001
+  0%|          | 0/1000 [00:00<?, ?it/s]  0%|          | 1/1000 [05:23<89:40:14, 323.14s/it]Epoch [1/1000], Loss: 0.00771505, Best Loss: inf
+*** New best model saved at epoch 1 with loss 0.00771505 ***
+  0%|          | 2/1000 [10:43<89:07:25, 321.49s/it]Epoch [2/1000], Loss: 0.00003707, Best Loss: 0.00771505
+*** New best model saved at epoch 2 with loss 0.00003707 ***
+  0%|          | 3/1000 [16:06<89:13:56, 322.20s/it]Epoch [3/1000], Loss: 0.00001637, Best Loss: 0.00003707
+No improvement for 1 epochs (patience: 10)
+  0%|          | 4/1000 [21:30<89:18:16, 322.79s/it]Epoch [4/1000], Loss: 0.00002598, Best Loss: 0.00003707
+No improvement for 2 epochs (patience: 10)
+  0%|          | 5/1000 [26:53<89:13:59, 322.85s/it]Epoch [5/1000], Loss: 0.00004294, Best Loss: 0.00003707
+No improvement for 3 epochs (patience: 10)
+  1%|          | 6/1000 [32:16<89:09:11, 322.89s/it]Epoch [6/1000], Loss: 0.00004854, Best Loss: 0.00003707
+No improvement for 4 epochs (patience: 10)
+  1%|          | 7/1000 [37:38<89:03:26, 322.87s/it]Epoch [7/1000], Loss: 0.00004949, Best Loss: 0.00003707
+No improvement for 5 epochs (patience: 10)
+  1%|          | 8/1000 [42:59<88:46:55, 322.19s/it]Epoch [8/1000], Loss: 0.00005025, Best Loss: 0.00003707
+No improvement for 6 epochs (patience: 10)
+  1%|          | 9/1000 [48:22<88:45:16, 322.42s/it]Epoch [9/1000], Loss: 0.00004822, Best Loss: 0.00003707
+No improvement for 7 epochs (patience: 10)
+  1%|          | 10/1000 [53:44<88:37:51, 322.29s/it]Epoch [10/1000], Loss: 0.00004859, Best Loss: 0.00003707
+No improvement for 8 epochs (patience: 10)
+  1%|          | 11/1000 [59:05<88:25:15, 321.86s/it]Epoch [11/1000], Loss: 0.00449539, Best Loss: 0.00003707
+No improvement for 9 epochs (patience: 10)
+  1%|          | 11/1000 [1:04:27<96:34:42, 351.55s/it]
+Epoch [12/1000], Loss: 0.00011276, Best Loss: 0.00003707
+No improvement for 10 epochs (patience: 10)
+
+Early stopping triggered at epoch 12
+Best loss 0.00003707 was at epoch 2
+Final model saved at save/final_pretrain_q127_s512_bs64_ep12.pt
+Best model was saved at epoch 2 with loss 0.00003707
