@@ -94,7 +94,7 @@ for i = 1:samples_num
     approx_entropy = []
 
 
-    # 局部 pair 熵
+    # 局部  pair  熵
     for row in 0:(Ny-1)
         for col in 0:(Nx-2)
             site_a = row * Nx + col + 1
