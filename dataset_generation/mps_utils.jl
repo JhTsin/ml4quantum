@@ -88,3 +88,43 @@ function exact_renyi_entropy_size_two(psi::MPS, a::Int, b::Int)
     D1,_ = eigen(rho_ab)
     return -log2(sum(real(diag(D1).*diag(D1))))
 end;
+
+"""
+Compute the second-order Rényi entropy S₂ = -log₂(Tr(rho_A²))
+across a given MPS bond (bipartition cut).
+This matches the definition used in the Nature 2023 paper.
+"""
+function exact_renyi_entropy_cut(psi::MPS, bond::Int)
+    # orthogonalize the MPS at the desired cut
+    orthogonalize!(psi, bond)
+    # obtain Schmidt singular values across the bond using SVD
+    U, S, V = svd(psi[bond], (linkinds(psi, bond-1)..., siteinds(psi, bond)...))
+    s = diag(S)
+    # Schmidt coefficients should already be normalized (sum of squares = 1)
+    # compute Rényi-2 entropy: S₂ = -log₂(∑ sᵢ⁴)
+    return -log2(sum(abs2.(s).^2))
+end
+
+"""
+Compute S₂ for a contiguous block of sites A 
+in MPS (shadow-compatible version)
+"""
+function exact_renyi_entropy_block(psi::MPS, A::Vector{Int})
+    # Bring orthogonality center to the last site of A
+    orthogonalize!(psi, last(A))
+    # Form reduced density matrix ρ_A (using successive contractions)
+    rhoA = psi[A[1]]
+    for k in A[2:end]
+        rhoA *= psi[k]
+    end
+    psidag = prime(dag(psi), linkinds(psi))
+    rhoA *= psidag[A[1]]
+    for k in A[2:end]
+        rhoA *= psidag[k]
+    end
+    # Diagonalize and compute S₂ = -log₂(∑ λ²)
+    D, _ = eigen(rhoA)
+    λ = real(diag(D))
+    λ ./= sum(λ)
+    return -log2(sum(λ.^2))
+end

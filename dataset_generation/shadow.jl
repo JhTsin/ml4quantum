@@ -176,3 +176,63 @@ function cal_shadow_renyi_entropy(obs, subsystem)
     return res
 
 end;
+
+# Approximate Rényi-2 entropy across a bipartition cut using classical shadows
+# subsystem_left : indices of qubits on the left of the cut
+# subsystem_right: indices of qubits on the right of the cut
+function cal_shadow_renyi_entropy_cut(obs, subsystem_left, subsystem_right)
+    M = size(obs, 1)
+    swap_sum = 0.0
+    for t1 in 1:M-1, t2 in t1+1:M
+        overlap = 1.0
+        for i in vcat(subsystem_left, subsystem_right)
+            if obs[t1, i][1] == obs[t2, i][1]
+                overlap *= (obs[t1, i][2] == obs[t2, i][2]) ? 1.0 : -1.0
+            end
+        end
+        swap_sum += overlap
+    end
+    swap_avg = swap_sum / (M * (M - 1) / 2)
+    # Clamp to avoid numerical issues
+    swap_avg = clamp(swap_avg, 1e-12, 1.0)
+    
+    # For Rényi-2 entropy: S₂ = -log₂(Tr(ρ_A²))
+    # The swap test gives us Tr(ρ_A²), so we directly take -log₂
+    return -log2(swap_avg)
+end
+
+
+# Approximate Rényi-2 entropy for a contiguous block (width <= 3 recommended)
+# obs:  shadow measurement results  (M × N array of (basis, outcome))
+# block: vector of qubit indices belonging to subsystem A
+function cal_shadow_renyi_entropy_block(obs, block::Vector{Int})
+    M, N = size(obs)
+    W = length(block)
+    renyi_sum = zeros(Int, 1 << (2 * W))
+    renyi_cnt = zeros(Int, 1 << (2 * W))
+    for t in 1:M
+        encoding, cum_out = 0, 1
+        renyi_sum[1] += 1
+        renyi_cnt[1] += 1
+        for b in 1:(1 << W) - 1
+            change_i = trailing_zeros(b)
+            idx = block[change_i + 1]
+            basis, outcome = obs[t, idx][1], obs[t, idx][2]
+            cum_out *= (outcome == 1 ? -1 : 1)
+            code = (basis == "X" ? 1 : basis == "Y" ? 2 : 3)
+            encoding ⊻= code << (2 * change_i)
+            renyi_sum[encoding + 1] += cum_out
+            renyi_cnt[encoding + 1] += 1
+        end
+    end
+    pred = 0.0
+    for c in 0:(1 << (2 * W)) - 1
+        n = renyi_cnt[c + 1]
+        n ≤ 1 && continue
+        pred += (renyi_sum[c + 1]^2 - n) /
+                (n * (n - 1) * (1 << W))
+    end
+    pred = clamp(pred, 1.0 / 2^W, 1.0 - 1e-9)
+    return -log2(pred)
+end
+

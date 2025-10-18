@@ -185,3 +185,72 @@ function transverse_field_ising_2d(Nx, Ny, spin, nsweeps, maxdim, cutoff, coupli
     return energy, psi, H
 end;
 
+
+#------------------- digital quantum simulation -------------------
+
+"""
+2D TFIM Trotter化量子电路
+基于Nature 2023论文: Figure 1的电路结构
+
+电路结构:
+每个Trotter步骤 = RX(θh)层 + 3层RZZ(θj)门
+- RX(θh) = exp(-i*θh/2*X) 作用到所有比特
+- RZZ(θj) = exp(-i*θj/2*Z⊗Z) 三组并行层
+
+参数:
+- Nx, Ny: 格子尺寸
+- θj, θh: 旋转角度
+- nsteps: Trotter步数
+"""
+function tfim_2d_quantum_circuit(Nx::Int, Ny::Int; 
+    θj::Float64=-π/2, θh::Float64=π/4, nsteps::Int=5)
+    
+    N = Nx * Ny
+    sites = siteinds("Qubit", N)
+    
+    # 初态: |0⟩⊗|0⟩...⊗|0⟩
+    psi = MPS(sites, ["0" for _ in 1:N])
+    
+    # Trotter演化
+    for step in 1:nsteps
+        # 1. RX层
+        for i in 1:N
+            gate = op("Rx", sites, i; θ=θh)
+            psi = apply(gate, psi; cutoff=1e-10, maxdim=512)
+        end
+        
+        # 2. 水平偶数列RZZ层
+        for r in 0:Ny-1
+            for c in 0:2:Nx-2
+                i = r*Nx + c + 1
+                j = i + 1
+                gate = op("Rzz", sites, i, j; ϕ=θj) # ITensors使用ϕ作为参数名
+                psi = apply(gate, psi; cutoff=1e-10, maxdim=512)
+            end
+        end
+        
+        # 3. 水平奇数列RZZ层
+        for r in 0:Ny-1
+            for c in 1:2:Nx-2
+                i = r*Nx + c + 1
+                j = i + 1
+                gate = op("Rzz", sites, i, j; ϕ=θj)
+                psi = apply(gate, psi; cutoff=1e-10, maxdim=512)
+            end
+        end
+        
+        # 4. 垂直RZZ层
+        for r in 0:Ny-2
+            for c in 0:Nx-1
+                i = r*Nx + c + 1
+                j = i + Nx
+                gate = op("Rzz", sites, i, j; ϕ=θj)
+                psi = apply(gate, psi; cutoff=1e-10, maxdim=512)
+            end
+        end
+    end
+    
+    return psi, sites
+end
+
+
