@@ -3,15 +3,15 @@
 # Aligned with: 'Rethink the Role of Deep Learning towards Large-scale Quantum Systems'
 
 # Configuration
-GRID_SIZE="8x8"  # Options: "5x5" or "8x8"
+GRID_SIZE="5x5"  # Options: "5x5" or "8x8"
 LAMBDA=1000      # Fixed λ = 10³ (paper setting)
 RFF_R=20         # RFF dimension R (paper: ≈ 10-40)
 RFF_GAMMA=0.6    # RFF scaling γ (paper: ≈ 0.5-0.7)
 
 # Set paths based on grid size
 if [ "$GRID_SIZE" = "5x5" ]; then
-    TRAIN_FILE="/home/ubuntu/code/python/DeepModelFusion/ml4quantum/dataset_generation/dataset_results/tfim_2d/n20|X(coupling, meas512)_y(energy,entropy,corrs)_q(8, 8).csv"
-    TEST_FILE="/home/ubuntu/code/python/DeepModelFusion/ml4quantum/dataset_generation/dataset_results/tfim_2d/n200|X(coupling, meas512)_y(energy,entropy,corrs)_q(8, 8).csv"
+    TRAIN_FILE="/home/ubuntu/code/python/DeepModelFusion/ml4quantum/dataset_generation/dataset_results/tfim_2d/n20|X(coupling, meas512)_y(energy,entropy,corrs)_q(5, 5).csv"
+    TEST_FILE="/home/ubuntu/code/python/DeepModelFusion/ml4quantum/dataset_generation/dataset_results/tfim_2d/n200|X(coupling, meas512)_y(energy,entropy,corrs)_q(5, 5).csv"
 elif [ "$GRID_SIZE" = "8x8" ]; then
     TRAIN_FILE="/home/ubuntu/code/python/DeepModelFusion/ml4quantum/dataset_generation/dataset_results/tfim_2d/n20|X(coupling, meas512)_y(energy,entropy,corrs)_q(8, 8).csv"
     TEST_FILE="/home/ubuntu/code/python/DeepModelFusion/ml4quantum/dataset_generation/dataset_results/tfim_2d/n200|X(coupling, meas512)_y(energy,entropy,corrs)_q(8, 8).csv"

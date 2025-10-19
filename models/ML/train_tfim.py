@@ -66,7 +66,7 @@ def load_data(file_path, task='correlation'):
     X_raw = df['measurement_samples'].apply(ast.literal_eval).tolist()
     X = np.array(X_raw)  # (N, M, Nq)
     N, num_meas, num_qubits = X.shape
-    X_flat = X.reshape(N, -1)
+    X_flat = X.reshape(N, -1) # (N, M*Nq)
     print(f" Loaded {N} samples, feature dim (before RFF): {X_flat.shape[1]}")
 
     # 标签列

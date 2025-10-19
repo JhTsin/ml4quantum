@@ -13,4 +13,3 @@ PID=$!
 echo "Experiments started with PID: $PID"
 echo "You can monitor progress with: tail -f 2dHFIM.log"
 echo "To check if it's still running: ps -p $PID"
-
