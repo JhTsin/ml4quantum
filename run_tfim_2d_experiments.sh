@@ -36,17 +36,6 @@ for grid in "${GRID_SIZES[@]}"; do
     done
 done
 
-# Part 3: Run with -n 200 -s 4096 for high-quality dataset
-echo "Part 3: Running with -n 200 -s 4096 for high-quality dataset..."
-for grid in "${GRID_SIZES[@]}"; do
-    read -r nx ny <<< "$grid"
-    echo "Running: Nx=$nx, Ny=$ny, samples=200, shots=4096"
-    julia dataset_generation/generation_tfim_2d_digital.jl -n 200 -s 4096 --Nx $nx --Ny $ny
-    echo "Completed: Nx=$nx, Ny=$ny, samples=200, shots=4096 at $(date)"
-    echo "------------------------------------------------------"
-done
-
 echo "======================================================"
 echo "All experiments completed!"
 echo "End time: $(date)"
-
