@@ -1,3 +1,4 @@
+
 using ITensors, ITensorMPS
 using DataFrames
 using CSV
@@ -79,8 +80,8 @@ exact_entropy_list, approx_entropy_list = [], []
 
 for i = 1:samples_num
 
-    #psi, sites = tfim_2d_quantum_circuit(Nx, Ny; θj=-π/2, θh=π/2, nsteps=5)
-    psi, sites = tfim_2d_quantum_circuit(Nx, Ny; θj=-π/4, θh=π/2, nsteps=5)    
+    psi, sites = tfim_2d_quantum_circuit_pro(Nx, Ny; θj=-π/2, θh=π/2, nsteps=5)
+    
     obs = getsamples(psi, randombases(qubits, shots, local_basis=["X", "Y", "Z"]))
     meas_samples, approx_correlation = cal_shadow_correlation(obs)
     exact_correlation = (compute_correlation_paulix_norm(psi) .+ compute_correlation_pauliy_norm(psi) .+ compute_correlation_pauliz_norm(psi)) ./ 3.0

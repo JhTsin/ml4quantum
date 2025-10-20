@@ -253,4 +253,58 @@ function tfim_2d_quantum_circuit(Nx::Int, Ny::Int;
     return psi, sites
 end
 
+function tfim_2d_quantum_circuit_pro(Nx::Int, Ny::Int; 
+    θj::Float64=-π/2, θh::Float64=π/4, nsteps::Int=5)
+    
+    N = Nx * Ny
+    sites = siteinds("Qubit", N)
+    θj1 = θj * (0.4 + 0.2 * rand())  
+    θj2 = θj * (0.4 + 0.2 * rand())  
+    θj3 = θj * (0.4 + 0.2 * rand())  
+    θh1 = θh * (0.8 + 0.2 * rand())  
+    # 初态: |0⟩⊗|0⟩...⊗|0⟩
+    psi = MPS(sites, ["0" for _ in 1:N])
+    
+    # Trotter演化
+    for step in 1:nsteps
+        # 1. RX层
+        for i in 1:N
+            gate = op("Rx", sites, i; θ=θh1)
+            psi = apply(gate, psi; cutoff=1e-10, maxdim=512)
+        end
+        
+        # 2. 水平偶数列RZZ层
+        for r in 0:Ny-1
+            for c in 0:2:Nx-2
+                i = r*Nx + c + 1
+                j = i + 1
+                gate = op("Rzz", sites, i, j; ϕ=θj1) # ITensors使用ϕ作为参数名
+                psi = apply(gate, psi; cutoff=1e-10, maxdim=512)
+            end
+        end
+        
+        # 3. 水平奇数列RZZ层
+        for r in 0:Ny-1
+            for c in 1:2:Nx-2
+                i = r*Nx + c + 1
+                j = i + 1
+                gate = op("Rzz", sites, i, j; ϕ=θj2)
+                psi = apply(gate, psi; cutoff=1e-10, maxdim=512)
+            end
+        end
+        
+        # 4. 垂直RZZ层
+        for r in 0:Ny-2
+            for c in 0:Nx-1
+                i = r*Nx + c + 1
+                j = i + Nx
+                gate = op("Rzz", sites, i, j; ϕ=θj3)
+                psi = apply(gate, psi; cutoff=1e-10, maxdim=512)
+            end
+        end
+    end
+    
+    return psi, sites
+end
+
 
