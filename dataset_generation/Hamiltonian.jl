@@ -1,5 +1,12 @@
 using ITensors, ITensorMPS
 
+using PauliPropagation
+
+using LinearAlgebra
+
+using Yao: zero_state
+
+
 # Tang et al. 2024 ICLR
 function heisenberg_1d_tang(N, spin, nsweeps, maxdim, cutoff, coupling_strength)
     J = coupling_strength
@@ -254,14 +261,10 @@ function tfim_2d_quantum_circuit(Nx::Int, Ny::Int;
 end
 
 function tfim_2d_quantum_circuit_pro(Nx::Int, Ny::Int; 
-    θj::Float64=-π/2, θh::Float64=π/4, nsteps::Int=5)
+    θj1::Float64=-π/2, θj2::Float64=-π/2,θj3::Float64=-π/2,θh1::Float64=π/4, nsteps::Int=5)
     
     N = Nx * Ny
     sites = siteinds("Qubit", N)
-    θj1 = θj * (0.4 + 0.2 * rand())  
-    θj2 = θj * (0.4 + 0.2 * rand())  
-    θj3 = θj * (0.4 + 0.2 * rand())  
-    θh1 = θh * (0.8 + 0.2 * rand())  
     # 初态: |0⟩⊗|0⟩...⊗|0⟩
     psi = MPS(sites, ["0" for _ in 1:N])
     
@@ -307,4 +310,101 @@ function tfim_2d_quantum_circuit_pro(Nx::Int, Ny::Int;
     return psi, sites
 end
 
+"""
+2D TFIM Trotter化量子电路 - Schrödinger propagation 版本 (兼容 PauliPropagation ≥ v0.6)
 
+参数：
+- Nx, Ny: 格点尺寸
+- dt: 时间步长
+- J: 相互作用强度
+- h: 横场强度
+- nsteps: Trotter 步数
+- topology: 可选的耦合拓扑 (默认生成二维方格)
+- output_state: 是否返回最终态 (默认 true)
+
+返回：
+- 若 output_state=true，返回 (ψ, expval)
+- 若 output_state=false，仅返回期望值
+"""
+function tfim_2d_quantum_circuit_pp(Nx::Int, Ny::Int;
+    dt::Float64=0.05, J::Float64=2.0, h::Float64=1.0, nsteps::Int=20,
+    topology::Union{Nothing, Vector{Tuple{Int,Int}}}=nothing,
+    output_state::Bool=true)
+
+    # ========== 构建格点和拓扑 ==========
+    N = Nx * Ny
+    if topology === nothing
+        topology = Vector{Tuple{Int,Int}}()
+        # 水平连接
+        for r in 0:Ny-1
+            for c in 0:Nx-2
+                i = r * Nx + c + 1
+                j = i + 1
+                push!(topology, (i, j))
+            end
+        end
+        # 垂直连接
+        for r in 0:Ny-2
+            for c in 0:Nx-1
+                i = r * Nx + c + 1
+                j = i + Nx
+                push!(topology, (i, j))
+            end
+        end
+    end
+
+    # ========== 构建电路 ==========
+    layer = tfitrottercircuit(N, 1, topology=topology)
+
+    # ========== 定义参数向量 ==========
+    function define_thetas(circuit::Vector{Gate}, dt::Float64, J::Float64, h::Float64)
+        rzz_indices = getparameterindices(circuit, PauliRotation, [:Z, :Z])
+        rx_indices  = getparameterindices(circuit, PauliRotation, [:X])
+        nparams = countparameters(circuit)
+        thetas = zeros(nparams)
+        # 按照 notebook 中 eq.(3)
+        thetas[rzz_indices] .= - J * dt * 2
+        thetas[rx_indices]  .=  h * dt * 2
+        return thetas
+    end
+
+    thetas = define_thetas(layer, dt, J, h)
+
+    # ========== 构造共轭电路 (U†) ==========
+    adj_layer  = reverse(layer)
+    adj_thetas = -reverse(thetas)
+
+    # ========== 初态 |0...0⟩ ==========
+    ψ = zero_state(N)
+
+    # ========== 时间演化 (Schrödinger Picture) ==========
+    for _ in 1:nsteps
+        ψ = propagate!(adj_layer, ψ, adj_thetas;
+                       min_abs_coeff=1e-10, max_weight=15)
+    end
+
+    # ========== 可观测量 <ZZ> 平均值 ==========
+    observable = PauliSum(N)
+    for (i, j) in topology
+        PauliPropagation.add!(observable, [:Z, :Z], [i, j])
+    end
+    observable = observable / length(topology)
+
+    expval = expect(observable, ψ)
+
+    return ψ
+end
+
+
+# ============================
+# 使用示例
+# ============================
+"""
+# 3×3 格点演化示例
+psi, expval = tfim_2d_quantum_circuit_schrodinger_pp(3, 3; nsteps=10)
+println("⟨ZZ⟩ 平均值: ", expval)
+
+# 仅输出期望值
+val = tfim_2d_quantum_circuit_schrodinger_pp(3, 3; nsteps=10, output_state=false)
+println("⟨ZZ⟩ = ", val)
+"""

@@ -20,7 +20,7 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler('multiprocessor.log'),
+        logging.FileHandler('multiprocessor2.log'),
         logging.StreamHandler()
     ]
 )
@@ -172,13 +172,13 @@ def generate_experiment_parameters() -> List[Dict[str, Any]]:
     experiments = []
     
     # Grid sizes to test
-    grid_sizes = [(5, 5)]  # Add (8, 8) if needed
+    grid_sizes = [(3, 3)]  # Add (8, 8) if needed
     
     # Part 1: Run with -n 100 for different shot numbers
-    shots_n100 = [64,128,256,512]
+    shots_n100 = [20,20,20,20]
 
     for nx, ny in grid_sizes:
-        for samples in [100, 200]:
+        for samples in [100]:
             for shots in shots_n100:
                 experiments.append({
                     'nx': nx,
@@ -188,17 +188,17 @@ def generate_experiment_parameters() -> List[Dict[str, Any]]:
                     'part': 'Part1'
                 })
     
-    #Part 2: Run with -s 512 for different sample numbers (uncomment if needed)
-    samples_s512 = [20, 40, 60, 80, 100]
-    for nx, ny in grid_sizes:
-        for samples in samples_s512:
-            experiments.append({
-                'nx': nx,
-                'ny': ny,
-                'samples': samples,
-                'shots': 512,
-                'part': 'Part2'
-            })
+    # #Part 2: Run with -s 512 for different sample numbers (uncomment if needed)
+    # samples_s512 = [20, 40, 60, 80, 100]
+    # for nx, ny in grid_sizes:
+    #     for samples in samples_s512:
+    #         experiments.append({
+    #             'nx': nx,
+    #             'ny': ny,
+    #             'samples': samples,
+    #             'shots': 512,
+    #             'part': 'Part2'
+    #         })
     
     return experiments
 
@@ -242,13 +242,161 @@ def run_experiments_parallel(max_workers: int = 4):
     logger.info(f"Successful: {successful}, Failed: {failed}")
     logger.info(f"End time: {datetime.now()}")
 
+def run_experiments_sequential():
+    """
+    Run all experiments sequentially (one after another)
+    """
+    experiments = generate_experiment_parameters()
+    
+    logger.info(f"Starting {len(experiments)} experiments sequentially")
+    logger.info(f"Start time: {datetime.now()}")
+    
+    successful = 0
+    failed = 0
+    
+    for i, exp in enumerate(experiments, 1):
+        logger.info(f"Running experiment {i}/{len(experiments)}: {exp}")
+        try:
+            success, message, _ = run_single_experiment(exp)
+            if success:
+                successful += 1
+            else:
+                failed += 1
+                logger.error(f"Failed experiment: {exp}")
+        except Exception as e:
+            failed += 1
+            logger.error(f"Exception in experiment {exp}: {e}")
+    
+    logger.info(f"All experiments completed!")
+    logger.info(f"Successful: {successful}, Failed: {failed}")
+    logger.info(f"End time: {datetime.now()}")
+
+def run_experiments_loop(mode: str, max_workers: int = 4, loop_count: int = 1):
+    """
+    Run experiments in a loop with specified mode
+    
+    Args:
+        mode: 'parallel' or 'sequential'
+        max_workers: Maximum number of parallel processes (only used in parallel mode)
+        loop_count: Number of times to run the full experiment set
+    """
+    logger.info(f"Starting loop execution: {loop_count} iterations in {mode} mode")
+    total_start_time = datetime.now()
+    
+    total_successful = 0
+    total_failed = 0
+    
+    for iteration in range(1, loop_count + 1):
+        logger.info(f"=" * 60)
+        logger.info(f"ITERATION {iteration}/{loop_count}")
+        logger.info(f"=" * 60)
+        
+        iteration_start_time = datetime.now()
+        
+        if mode == 'parallel':
+            # Store current counts before running
+            prev_successful = total_successful
+            prev_failed = total_failed
+            
+            # Run parallel experiments
+            experiments = generate_experiment_parameters()
+            logger.info(f"Starting {len(experiments)} experiments with max {max_workers} parallel workers")
+            
+            successful = 0
+            failed = 0
+            
+            with ProcessPoolExecutor(max_workers=max_workers) as executor:
+                # Submit all experiments
+                future_to_params = {
+                    executor.submit(run_single_experiment, exp): exp 
+                    for exp in experiments
+                }
+                
+                # Process completed experiments
+                for future in as_completed(future_to_params):
+                    params = future_to_params[future]
+                    try:
+                        success, message, _ = future.result()
+                        if success:
+                            successful += 1
+                        else:
+                            failed += 1
+                            logger.error(f"Failed experiment: {params}")
+                    except Exception as e:
+                        failed += 1
+                        logger.error(f"Exception in experiment {params}: {e}")
+            
+            total_successful += successful
+            total_failed += failed
+            
+        elif mode == 'sequential':
+            # Store current counts before running
+            prev_successful = total_successful
+            prev_failed = total_failed
+            
+            # Run sequential experiments
+            experiments = generate_experiment_parameters()
+            logger.info(f"Starting {len(experiments)} experiments sequentially")
+            
+            successful = 0
+            failed = 0
+            
+            for i, exp in enumerate(experiments, 1):
+                logger.info(f"Running experiment {i}/{len(experiments)}: {exp}")
+                try:
+                    success, message, _ = run_single_experiment(exp)
+                    if success:
+                        successful += 1
+                    else:
+                        failed += 1
+                        logger.error(f"Failed experiment: {exp}")
+                except Exception as e:
+                    failed += 1
+                    logger.error(f"Exception in experiment {exp}: {e}")
+            
+            total_successful += successful
+            total_failed += failed
+        
+        iteration_end_time = datetime.now()
+        iteration_duration = iteration_end_time - iteration_start_time
+        
+        logger.info(f"Iteration {iteration} completed in {iteration_duration}")
+        logger.info(f"Iteration {iteration} results: Successful: {successful}, Failed: {failed}")
+        logger.info(f"Total results so far: Successful: {total_successful}, Failed: {total_failed}")
+    
+    total_end_time = datetime.now()
+    total_duration = total_end_time - total_start_time
+    
+    logger.info(f"=" * 60)
+    logger.info(f"LOOP EXECUTION COMPLETED")
+    logger.info(f"=" * 60)
+    logger.info(f"Total iterations: {loop_count}")
+    logger.info(f"Total duration: {total_duration}")
+    logger.info(f"Total successful: {total_successful}")
+    logger.info(f"Total failed: {total_failed}")
+    logger.info(f"Average time per iteration: {total_duration / loop_count}")
+    logger.info(f"End time: {total_end_time}")
+
 
 def main():
-    parser = argparse.ArgumentParser(description='Run 2D TFIM experiments with optimal parallelism')
+    parser = argparse.ArgumentParser(description='Run 2D TFIM experiments with parallel/sequential execution and loop support')
     parser.add_argument('--dry-run', action='store_true',
                        help='Print experiment parameters without running them')
     parser.add_argument('--skip-health-check', action='store_true',
                        help='Skip system health check before running')
+    
+    # Execution mode arguments
+    mode_group = parser.add_mutually_exclusive_group(required=False)
+    mode_group.add_argument('-par', '--parallel', action='store_true',
+                           help='Run experiments in parallel mode')
+    mode_group.add_argument('-seq', '--sequential', action='store_true',
+                           help='Run experiments in sequential mode')
+    
+    # Loop arguments
+    parser.add_argument('--loop', type=int, default=1,
+                       help='Number of times to run the full experiment set (default: 1)')
+    parser.add_argument('--max-workers', type=int, default=None,
+                       help='Maximum number of parallel workers (only used in parallel mode, default: auto-detect)')
     
     args = parser.parse_args()
     
@@ -259,6 +407,10 @@ def main():
             print(f"  {i}. {exp}")
         return
     
+    # Check if execution mode is specified (required for actual execution)
+    if not args.parallel and not args.sequential:
+        parser.error("One of -par/--parallel or -seq/--sequential is required for execution")
+    
     # Check system health before starting
     if not args.skip_health_check:
         logger.info("Performing system health check...")
@@ -266,12 +418,26 @@ def main():
             logger.warning("System health check failed. Use --skip-health-check to override.")
             logger.warning("Continuing anyway, but monitor system resources carefully.")
     
-    # Use maximum cores for fastest completion
-    max_workers = get_max_workers()
+    # Determine execution mode
+    if args.parallel:
+        mode = 'parallel'
+        max_workers = args.max_workers if args.max_workers else get_max_workers()
+        logger.info(f"Running in PARALLEL mode with {max_workers} workers")
+    else:
+        mode = 'sequential'
+        max_workers = 1  # Not used in sequential mode
+        logger.info("Running in SEQUENTIAL mode")
     
-    experiments = generate_experiment_parameters()
-    logger.info(f"Running {len(experiments)} experiments with maximum {max_workers} workers for fastest completion")
-    run_experiments_parallel(max_workers=max_workers)
+    # Run experiments
+    if args.loop > 1:
+        logger.info(f"Running {args.loop} iterations of experiments")
+        run_experiments_loop(mode=mode, max_workers=max_workers, loop_count=args.loop)
+    else:
+        # Single run
+        if mode == 'parallel':
+            run_experiments_parallel(max_workers=max_workers)
+        else:
+            run_experiments_sequential()
 
 if __name__ == "__main__":
     main()

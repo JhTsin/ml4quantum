@@ -42,7 +42,7 @@ def compute_rmse(y_pred, y_true):
     return np.sqrt(mse)
 
 
-def compute_uniqueness_ratio(values, atol=1e-8):
+def compute_uniqueness_ratio(values, atol=1e-4):
     """计算数组中不重复数值占比：unique_count / total_count（按元素、全量展开）。
     
     使用绝对容差进行浮点比较以避免由于数值误差导致的误判。

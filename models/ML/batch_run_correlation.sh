@@ -44,7 +44,7 @@ for GRID_SIZE in "${GRID_SIZES[@]}"; do
             
             # Run experiment in background with nohup
             nohup bash run_tfim_correlation.sh "$GRID_SIZE" "$MEAS_NUM" "$TRAIN_SIZE" > "$LOG_FILE" 2>&1 &
-            
+
             # Store PID
             PID=$!
             echo "  Started with PID: $PID"

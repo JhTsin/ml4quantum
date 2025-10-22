@@ -3,13 +3,13 @@
 Lasso regression for 2D TFIM quantum system
 Aligned with: 'Rethink the Role of Deep Learning towards Large-scale Quantum Systems' (ICML 2025)
 
-Key settings (based on the paper):
-- Random Fourier Features (RFF) used for feature mapping (Appendix B.2)
-- RFF formula: φ(x) = [x, sqrt(2/d) * cos(Wx+b)]
-- W ~ N(0, I) scaled by γ (Hamiltonian geometry informed)
+Key settings (based on improved-ml-algorithm-master):
+- Random Fourier Features (RFF) used for feature mapping
+- RFF formula: φ(x) = [cos(Wx * γ/√D), sin(Wx * γ/√D)]
+- W ~ N(0, I) with scaling γ/√D applied during transform
 - Fixed λ = 10^3 (no hyperparameter tuning)
 - 2D TFIM lattice, typical Lx×Ly ∈ {5×5, 8×8}
-- Feature dimension after RFF: d + R (original + R cosine features)
+- Feature dimension after RFF: 2*R (R cosine + R sine features)
 """
 
 import os
@@ -37,10 +37,10 @@ def parse_args():
                         help='Regularization λ for Lasso (fixed = 10³)')
     parser.add_argument('--lasso-tol', type=float, default=1e-3)
     parser.add_argument('--lasso-maxiter', type=int, default=10000)
-    parser.add_argument('--model-seed', type=int, default=999)
+    parser.add_argument('--model-seed', type=int, default=42)
 
     parser.add_argument('--save-results', action='store_true')
-    parser.add_argument('--output-dir', type=str, default='./results')
+    parser.add_argument('--output-dir', type=str, default='./results_log')
 
     # === 修改3: 保留随机傅立叶特征 (RFF) 映射 ===
     parser.add_argument('--num-rff', type=int, default=20,
@@ -90,7 +90,7 @@ def load_data(file_path, task='correlation'):
 # ======================================================
 def generate_rff_params(D, R, gamma=0.6, seed=None):
     """
-    Generate RFF random parameters W and b (to be reused for train/test)
+    Generate RFF random parameters W (to be reused for train/test)
     
     Args:
         D: Original feature dimension
@@ -99,48 +99,48 @@ def generate_rff_params(D, R, gamma=0.6, seed=None):
         seed: Random seed
     
     Returns:
-        W, b: Random projection matrix and phase shifts
+        W: Random projection matrix (R, D)
     """
     if seed is not None:
         np.random.seed(seed)
     
-    # Generate random projection matrix W ~ N(0, I), then scale by γ
-    W = np.random.randn(R, D) * gamma
+    # Generate random projection matrix W ~ N(0, I)
+    # Scaling by gamma/sqrt(D) will be applied in the transform function
+    W = np.random.randn(R, D)
     
-    # Generate random phase shifts b ~ Uniform[0, 2π]
-    b = np.random.uniform(0, 2*np.pi, R)
-    
-    return W, b
+    return W
 
 
-def apply_rff_transform(X, W, b):
+def apply_rff_transform(X, W, gamma=0.6):
     """
-    Apply RFF transformation using given W and b matrices
+    Apply RFF transformation using improved-ml-algorithm-master formula
     
-    Formula (from paper): φ(x) = [x, sqrt(2/d) * cos(Wx + b)]
+    Formula: φ(x) = [cos(Wx * γ/√D), sin(Wx * γ/√D)]
     where:
     - x is the original n×d feature matrix
-    - W and b are pre-generated random parameters
-    - d is the original feature dimension
+    - W is pre-generated random matrix ~ N(0, I)
+    - γ is scaling parameter
+    - D is the original feature dimension
     
-    Returns: [x, sqrt(2/d) * cos(Wx + b)] with dimension D + R
+    Returns: [cos(Wx * γ/√D), sin(Wx * γ/√D)] with dimension 2*R
     
-    Note: This differs from standard RFF. The paper concatenates original 
-    features with cosine features (no sine), which is problem-informed design
-    for quantum systems according to Hamiltonian geometry.
+    This matches the improved-ml-algorithm-master implementation:
+    val = np.dot(data_local, w_k.T) * gamma / np.sqrt(m_local)
+    cosv = np.cos(val)
+    sinv = np.sin(val)
     """
     N, D = X.shape
+    R = W.shape[0]
     
-    # Compute projections: Wx + b
-    proj = np.dot(X, W.T) + b  # Shape: (N, R)
+    # Compute projections: Wx * γ/√D
+    proj = np.dot(X, W.T) * gamma / np.sqrt(D)  # Shape: (N, R)
     
-    # Create RFF features: sqrt(2/d) * cos(Wx + b)
-    # Scaling factor sqrt(2/d) as specified in paper
-    scale = np.sqrt(2.0 / D)
-    cos_features = scale * np.cos(proj)  # Shape: (N, R)
+    # Create RFF features: cos and sin
+    cos_features = np.cos(proj)  # Shape: (N, R)
+    sin_features = np.sin(proj)  # Shape: (N, R)
     
-    # Concatenate original features with RFF: [x, sqrt(2/d) * cos(Wx + b)]
-    X_rff = np.concatenate([X, cos_features], axis=1)  # Shape: (N, D + R)
+    # Concatenate cos and sin features: [cos(Wx * γ/√D), sin(Wx * γ/√D)]
+    X_rff = np.concatenate([cos_features, sin_features], axis=1)  # Shape: (N, 2*R)
     
     return X_rff
 
@@ -154,18 +154,18 @@ def train_and_evaluate(X_train, y_train_approx, X_test, y_test_exact, args):
     X_train = scaler.fit_transform(X_train)
     X_test  = scaler.transform(X_test)
 
-    # === 修改4: 添加 RFF 映射 (论文附录B.2说明) ===
-    # CRITICAL: Generate W and b ONCE, then apply to both train and test
+    # === 修改4: 添加 RFF 映射 (improved-ml-algorithm-master formula) ===
+    # CRITICAL: Generate W ONCE, then apply to both train and test
     # This ensures both datasets are in the SAME feature space
     D = X_train.shape[1]  # Original feature dimension
-    W, b = generate_rff_params(D, R=args.num_rff, gamma=args.rff_gamma, 
-                               seed=args.model_seed)
+    W = generate_rff_params(D, R=args.num_rff, gamma=args.rff_gamma, 
+                           seed=args.model_seed)
     
-    # Apply RFF transformation using the SAME W and b for both sets
-    X_train = apply_rff_transform(X_train, W, b)
-    X_test  = apply_rff_transform(X_test, W, b)
+    # Apply RFF transformation using the SAME W for both sets
+    X_train = apply_rff_transform(X_train, W, gamma=args.rff_gamma)
+    X_test  = apply_rff_transform(X_test, W, gamma=args.rff_gamma)
     
-    print(f" After RFF mapping: feature dim = {X_train.shape[1]} (d+R where d={D}, R={args.num_rff})")
+    print(f" After RFF mapping: feature dim = {X_train.shape[1]} (2*R where R={args.num_rff})")
 
     # 多输出处理
     if y_train_approx.ndim == 1:

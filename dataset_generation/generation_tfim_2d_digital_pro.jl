@@ -80,8 +80,12 @@ exact_entropy_list, approx_entropy_list = [], []
 
 for i = 1:samples_num
 
-    psi, sites = tfim_2d_quantum_circuit_pro(Nx, Ny; θj=-π/2, θh=π/2, nsteps=5)
-    
+   # 1 2 3
+    nstep = rand(2:9)
+    psi = tfim_2d_quantum_circuit_pp(Nx, Ny; nsteps=10)
+    #psi, sites = tfim_2d_quantum_circuit_pro(Nx, Ny; θj1=-π,θj2=-π/4,θj3=-π/2, θh1=π/2, nsteps=nstep)
+    #psi, sites = tfim_2d_quantum_circuit_pro(Nx, Ny; θj1=-π/3,θj2=-2*π/3,θj3=-π/6, θh1=π/2, nsteps=5)
+    #psi, sites = tfim_2d_quantum_circuit_pro(Nx, Ny; θj1=-π/2,θj2=-π/2,θj3=-2*π/3, θh1=π/2, nsteps=5)
     obs = getsamples(psi, randombases(qubits, shots, local_basis=["X", "Y", "Z"]))
     meas_samples, approx_correlation = cal_shadow_correlation(obs)
     exact_correlation = (compute_correlation_paulix_norm(psi) .+ compute_correlation_pauliy_norm(psi) .+ compute_correlation_pauliz_norm(psi)) ./ 3.0
@@ -96,18 +100,20 @@ for i = 1:samples_num
 
 
     # 局部  pair  熵
-    for row in 0:(Ny-1)
-        for col in 0:(Nx-2)
-            site_a = row * Nx + col + 1
-            site_b = site_a + 1
+    approx_entropy = [cal_shadow_renyi_entropy(obs, [a, a+1]) for a in 1:Nx*Ny-1];
+    exact_entropy = [exact_renyi_entropy_size_two(psi, a, a+1) for a in 1:Nx*Ny-1];
+    # for row in 0:(Ny-1)
+    #     for col in 0:(Nx-2)
+    #         site_a = row * Nx + col + 1
+    #         site_b = site_a + 1
             
-            # Exact Renyi entropy
-            push!(exact_entropy, exact_renyi_entropy_size_two(psi, site_a, site_b))
+    #         # Exact Renyi entropy
+    #         push!(exact_entropy, exact_renyi_entropy_size_two(psi, site_a, site_b))
             
-            # Approximate Renyi entropy from shadow
-            push!(approx_entropy, cal_shadow_renyi_entropy(obs, [site_a, site_b]))
-        end
-    end
+    #         # Approximate Renyi entropy from shadow
+    #         push!(approx_entropy, cal_shadow_renyi_entropy(obs, [site_a, site_b]))
+    #     end
+    # end
     
     push!(exact_entropy_list, exact_entropy)
     push!(approx_entropy_list, approx_entropy)
