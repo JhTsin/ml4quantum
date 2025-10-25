@@ -18,12 +18,12 @@ include("shadow.jl")
 # Import Python function
 # Add current directory to Python path
 sys = pyimport("sys")
-push!(sys.path, pwd())
+push!(sys.path, "/home/ubuntu/code/python/DeepModelFusion/ml4quantum/dataset_generation")
 
 # Import the Python file directly
 py"""
 import sys
-sys.path.append('.')
+sys.path.append('/home/ubuntu/code/python/DeepModelFusion/ml4quantum/dataset_generation')
 import tfim_2d_pennyLane
 """
 
@@ -61,7 +61,7 @@ function tfim_2d_quantum_circuit_pro(Nx::Int, Ny::Int; θj1=-π, θj2=-π/4, θj
     
     # Create MPS from the ITensor using SVD
     psi = MPS(state_tensor, sites)
-    
+    normalize!(psi)
     conversion_elapsed = time() - conversion_start
     
     # Print timing information
@@ -155,8 +155,8 @@ for i = 1:samples_num
     # Store angle parameters
     push!(angle_list, [θj1, θj2, θj3, θh1, nstep])
 
-    psi, sites = tfim_2d_quantum_circuit_pro_old(Nx, Ny; θj1=θj1, θj2=θj2, θj3=θj3, θh1=θh1, nsteps=nstep)
-
+    psi, sites = tfim_2d_quantum_circuit_pro(Nx, Ny; θj1=θj1, θj2=θj2, θj3=θj3, θh1=θh1, nsteps=nstep)
+    
     obs = getsamples(psi, randombases(qubits, shots, local_basis=["X", "Y", "Z"]))
     meas_samples, approx_correlation = cal_shadow_correlation(obs)
     exact_correlation = (compute_correlation_paulix_norm(psi) .+ compute_correlation_pauliy_norm(psi) .+ compute_correlation_pauliz_norm(psi)) ./ 3.0
