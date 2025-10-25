@@ -62,6 +62,7 @@ for qubits in qubits_list
         coupling_matrix = make_coupling_matrix_tfim(qubits)
         push!(coupling_matrix_list, vec((real(coupling_matrix))))
         ground_state_energy, psi, first_excited_energy, psi2 = transverse_field_ising_1d(qubits, spin, nsweeps, maxdim, cutoff, Float32.(coupling_matrix),eigsolve_krylovdim);
+
         push!(ground_state_energy_list, ground_state_energy)
         push!(first_excited_energy_list, first_excited_energy)
         exact_z = compute_correlation_pauliz_norm(psi)
